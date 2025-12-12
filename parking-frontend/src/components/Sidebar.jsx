@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Button } from 'react-bootstrap'
 import { useState } from 'react'
+import '../sidebar.css'
 
 export default function Sidebar() {
     const { token, role, logout } = useAuth()
@@ -36,20 +36,15 @@ export default function Sidebar() {
             {/* Sidebar Header */}
             <div className="sidebar-header">
                 <Link to="/" className="sidebar-brand">
-                    {!collapsed && (
-                        <>
-                            <span className="brand-icon">🅿️</span>
-                            <span className="brand-text">Smart Parking</span>
-                        </>
-                    )}
-                    {collapsed && <span className="brand-icon-only">🅿️</span>}
+                    <span className="brand-icon">🅿️</span>
+                    {!collapsed && <span className="brand-text">Smart Parking</span>}
                 </Link>
                 <button
                     className="sidebar-toggle"
                     onClick={() => setCollapsed(!collapsed)}
                     title={collapsed ? 'Expand' : 'Collapse'}
                 >
-                    {collapsed ? '→' : '←'}
+                    {collapsed ? '☰' : '✕'}
                 </button>
             </div>
 
@@ -59,7 +54,7 @@ export default function Sidebar() {
                     <NavLink
                         key={item.path}
                         to={item.path}
-                        className={`sidebar-link ${isActive(item.path) ? 'active' : ''}`}
+                        className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
                         title={collapsed ? item.label : ''}
                     >
                         <span className="link-icon">{item.icon}</span>
@@ -72,31 +67,30 @@ export default function Sidebar() {
             <div className="sidebar-footer">
                 {!token ? (
                     <div className="auth-buttons">
-                        <Button
-                            as={Link}
-                            to="/login"
-                            variant="outline-light"
-                            size="sm"
-                            className="w-100 mb-2"
-                        >
-                            {!collapsed && 'Login'}
-                            {collapsed && '🔑'}
-                        </Button>
-                        <Button
-                            as={Link}
-                            to="/register"
-                            variant="primary"
-                            size="sm"
-                            className="w-100"
-                        >
-                            {!collapsed && 'Register'}
-                            {collapsed && '📝'}
-                        </Button>
+                        {!collapsed ? (
+                            <>
+                                <Link to="/login" className="sidebar-btn sidebar-btn-outline">
+                                    🔑 Login
+                                </Link>
+                                <Link to="/register" className="sidebar-btn sidebar-btn-primary">
+                                    📝 Register
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login" className="sidebar-btn sidebar-btn-icon" title="Login">
+                                    🔑
+                                </Link>
+                                <Link to="/register" className="sidebar-btn sidebar-btn-icon" title="Register">
+                                    📝
+                                </Link>
+                            </>
+                        )}
                     </div>
                 ) : (
                     <div className="user-section">
                         {!collapsed && (
-                            <div className="user-info mb-2">
+                            <div className="user-info">
                                 <div className="user-avatar">
                                     {role === 'admin' ? '👨‍💼' : '👤'}
                                 </div>
@@ -105,15 +99,12 @@ export default function Sidebar() {
                                 </div>
                             </div>
                         )}
-                        <Button
-                            variant="outline-danger"
-                            size="sm"
+                        <button
+                            className="sidebar-btn sidebar-btn-danger"
                             onClick={handleLogout}
-                            className="w-100"
                         >
-                            {!collapsed && '🚪 Logout'}
-                            {collapsed && '🚪'}
-                        </Button>
+                            🚪 {!collapsed && 'Logout'}
+                        </button>
                     </div>
                 )}
             </div>
