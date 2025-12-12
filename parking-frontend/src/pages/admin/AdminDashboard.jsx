@@ -35,8 +35,8 @@ export default function AdminDashboard() {
 
       // Load overview statistics
       const [lotsRes, reservationsRes] = await Promise.all([
-        api.get('/api/parking'),
-        api.get('/api/reservations')
+        api.get('/api/parking-lots'),
+        api.get('/api/reservations/all')
       ]);
 
       const lots = lotsRes.data;
