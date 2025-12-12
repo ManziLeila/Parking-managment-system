@@ -1,0 +1,12 @@
+# Exclude from Docker build
+node_modules/
+npm-debug.log*
+.env
+.env.local
+coverage/
+*.log
+.git/
+.gitignore
+README.md
+.vscode/
+.idea/

@@ -1,0 +1,18 @@
+ 
+body { background-color: #0f1115; color: #f0f3f7; }
+a { text-decoration: none; }
+
+.hero {
+  position: relative;
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background:
+    linear-gradient(rgba(5,10,20,0.55), rgba(5,10,20,0.75)),
+    url('https://images.unsplash.com/photo-1518306727298-4c72fce1b9d7?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+}
+.hero h1 { font-size: 3rem; font-weight: 800; color: #fff; }
+.hero p  { color: #d8dee9; max-width: 750px; margin: 10px auto 0; }
+.card-bg { background: #161a22; border: 1px solid #232a35; color: #e9eef6; }
+.badge-soft { background: #1f2633; color: #9bd2ff; border: 1px solid #2a3545; }

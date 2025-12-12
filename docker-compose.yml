@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:14-alpine
+    container_name: parking-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-parking_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-parking_password}
+      POSTGRES_DB: ${DB_NAME:-parking_system}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./parking-backend/database/migrations:/docker-entrypoint-initdb.d/migrations
+      - ./parking-backend/database/seeds:/docker-entrypoint-initdb.d/seeds
+    networks:
+      - parking-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-parking_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./parking-backend
+      dockerfile: Dockerfile
+    container_name: parking-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      DB_USER: ${DB_USER:-parking_user}
+      DB_HOST: database
+      DB_NAME: ${DB_NAME:-parking_system}
+      DB_PASSWORD: ${DB_PASSWORD:-parking_password}
+      DB_PORT: 5432
+      JWT_SECRET: ${JWT_SECRET:-your_super_secret_jwt_key_change_in_production}
+    ports:
+      - "5000:5000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - parking-network
+    volumes:
+      - ./parking-backend:/app
+      - /app/node_modules
+
+  # Frontend
+  frontend:
+    build:
+      context: ./parking-frontend
+      dockerfile: Dockerfile
+    container_name: parking-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - parking-network
+    environment:
+      VITE_API_URL: http://localhost:5000/api
+
+networks:
+  parking-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
